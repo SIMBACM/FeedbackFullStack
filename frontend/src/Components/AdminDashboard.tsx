@@ -32,8 +32,10 @@ interface ParticipantTableProps {
   isLoading?: boolean;
 }
 
-// API configuration
-const API_BASE_URL = 'http://localhost:8080/api';
+import { getApiBaseUrl } from '../config/urlConfig';
+
+// API configuration - dynamically determined based on environment
+const API_BASE_URL = getApiBaseUrl();
 
 // Fetch feedback data from backend API
 const fetchFeedbackData = async (): Promise<Participant[]> => {

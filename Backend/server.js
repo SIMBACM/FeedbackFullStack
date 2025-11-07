@@ -7,27 +7,16 @@ require('dotenv').config();
 const webhookRoutes = require('./routes/webhook');
 const whatsappRoutes = require('./routes/whatsapp');
 const feedbackRoutes = require('./routes/feedback');
+const { getCorsOrigins, logConfiguration } = require('./utils/urlConfig');
 
 const app = express();
 
 // Security middleware
 app.use(helmet());
-// CORS configuration
+
+// CORS configuration with dynamic origins
 const corsOptions = {
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:3000',
-    'http://localhost:5175',
-    // Allow all localhost ports for development
-    /^http:\/\/localhost:\d+$/,
-    // Allow Railway/Vercel/Netlify deployments
-    /^https:\/\/.*\.railway\.app$/,
-    /^https:\/\/.*\.vercel\.app$/,
-    /^https:\/\/.*\.netlify\.app$/,
-    // Allow all origins in development (remove in production)
-    process.env.NODE_ENV === 'development' ? '*' : null
-  ].filter(Boolean),
+  origin: getCorsOrigins(),
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -167,10 +156,11 @@ const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 app.listen(PORT, HOST, () => {
   console.log(`🚀 WhatsApp Webhook Server running on http://${HOST}:${PORT}`);
   console.log(`📱 Webhook URL: http://${HOST}:${PORT}/webhook`);
-  console.log(`🌐 Frontend CORS: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
   console.log(`⚙️  Environment: ${process.env.NODE_ENV || 'development'}`);
   
-  // Test that the server is actually working
+  // Log dynamic URL configuration
+  logConfiguration();
+  
   console.log('✅ Server is ready to accept requests');
 });
 

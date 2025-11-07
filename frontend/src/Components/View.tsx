@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-// API configuration
-const API_BASE_URL = 'http://localhost:8080/api';
+import { getApiBaseUrl, getSseUrl } from '../config/urlConfig';
+
+// API configuration - dynamically determined based on environment
+const API_BASE_URL = getApiBaseUrl();
 
 // TypeScript interface for feedback data
 interface FeedbackData {
@@ -590,7 +592,7 @@ const View: React.FC = () => {
     loadFeedbackData();
 
     // Set up Server-Sent Events for real-time updates
-    const eventSource = new EventSource(`${API_BASE_URL.replace('/api', '')}/api/events`);
+    const eventSource = new EventSource(getSseUrl());
     
     eventSource.onopen = () => {
       console.log('🔗 Connected to real-time feedback updates');
